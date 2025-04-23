@@ -1,0 +1,32 @@
+
+.sidebar {
+    width: 200px;
+    background: #2d3748;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+  }
+  
+  .sidebar h2 {
+    margin-bottom: 30px;
+  }
+  
+  .sidebar nav a {
+    display: block;
+    margin-bottom: 15px;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .sidebar nav a:hover {
+    color: #a0aec0;
+  }
+  
+  /* Header.css */
+  .header {
+    background: #edf2f7;
+    padding: 20px;
+    margin-left: 200px;
+  }
+  
