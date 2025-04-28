@@ -1,77 +1,100 @@
-import React from 'react';
-import Sidebar from '../components/Sidebar';
+import React, { useState } from 'react';
+import "./Invoices.css";  
 import Header from '../components/Header';
-import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import { DocumentTextIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
-// Datos de ejemplo para facturas del SII
-const siiInvoices = [
-  { id: 'F001-000123', rut: '76.543.210-9', razonSocial: 'Comercial X Ltda.', monto: 230000, estado: 'Aceptada', fecha: '2025-04-01' },
-  { id: 'F001-000124', rut: '98.765.432-1', razonSocial: 'Servicios Y SpA', monto: 145000, estado: 'Rechazada', fecha: '2025-04-04' },
-  { id: 'F001-000125', rut: '12.345.678-5', razonSocial: 'Importadora Z EIRL', monto: 198000, estado: 'Pendiente', fecha: '2025-04-05' },
+const facturasMock = [
+  { id: 'F001', fecha: '2024-01-15', proveedor: 'Proveedor A', monto: 45000, iva: 8550 },
+  { id: 'F002', fecha: '2024-02-20', proveedor: 'Proveedor B', monto: 67000, iva: 12730 },
+  { id: 'F003', fecha: '2024-03-12', proveedor: 'Proveedor C', monto: 38000, iva: 7220 },
+  { id: 'F004', fecha: '2024-04-05', proveedor: 'Proveedor A', monto: 59000, iva: 11210 },
+  { id: 'F005', fecha: '2024-05-25', proveedor: 'Proveedor D', monto: 72000, iva: 13680 },
 ];
 
 const Invoices = () => {
-  const navigate = useNavigate();
+  const [filtroProveedor, setFiltroProveedor] = useState('');
+  const [activeLink, setActiveLink] = useState('facturas');
 
-  // Función para redirigir al Dashboard
-  const handleVerGraficos = () => {
-    navigate('/dashboard');
-  };
+  const facturasFiltradas = filtroProveedor
+    ? facturasMock.filter(f => f.proveedor === filtroProveedor)
+    : facturasMock;
 
   return (
-    <div style={{ marginLeft: '200px' }}>
-      <Header />
-      <div style={{ padding: '20px' }}>
-        <h2>Facturas Electrónicas - SII</h2>
-        
-        {/* Botón para ir al Dashboard */}
-        <button
-          onClick={handleVerGraficos}
-          style={{
-            padding: '10px 20px',
-            marginBottom: '20px',
-            backgroundColor: '#4A90E2',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
-          Volver a los Gráficos
-        </button>
+    <div className="invoices-container">
+      <Sidebar activeLink={activeLink} setActiveLink={setActiveLink} />
+      <div className="invoices-main">
+        <Header />
+        <section>
+          <h2>Facturas del SII</h2>
+          <p>Consulta y administra las facturas recibidas mensualmente.</p>
+        </section>
 
-        {/* Tabla de facturas */}
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th>N° Documento</th>
-              <th>RUT Emisor</th>
-              <th>Razón Social</th>
-              <th>Monto</th>
-              <th>Estado SII</th>
-              <th>Fecha</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {siiInvoices.map((factura) => (
-              <tr key={factura.id}>
-                <td>{factura.id}</td>
-                <td>{factura.rut}</td>
-                <td>{factura.razonSocial}</td>
-                <td>${factura.monto.toLocaleString()}</td>
-                <td>{factura.estado}</td>
-                <td>{factura.fecha}</td>
-                <td><button>Ver Detalle</button></td>
+        <section className="filter-section">
+          <label>Filtrar por proveedor:</label>
+          <select
+            value={filtroProveedor}
+            onChange={e => setFiltroProveedor(e.target.value)}
+          >
+            <option value="">Todos</option>
+            <option value="Proveedor A">Proveedor A</option>
+            <option value="Proveedor B">Proveedor B</option>
+            <option value="Proveedor C">Proveedor C</option>
+            <option value="Proveedor D">Proveedor D</option>
+          </select>
+        </section>
+
+        <section className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th>Monto Neto</th>
+                <th>IVA</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {facturasFiltradas.map(factura => (
+                <tr key={factura.id}>
+                  <td>{factura.id}</td>
+                  <td>{factura.fecha}</td>
+                  <td>{factura.proveedor}</td>
+                  <td>${factura.monto.toLocaleString()}</td>
+                  <td>${factura.iva.toLocaleString()}</td>
+                  <td className="actions-cell">
+                    <button
+                      onClick={() => alert(`Ver detalles de ${factura.id}`)}
+                      className="btn btn-blue"
+                    >
+                      <DocumentTextIcon className="icon" />
+                      Detalle
+                    </button>
+                    <button
+                      onClick={() => alert(`Descargando PDF de ${factura.id}`)}
+                      className="btn btn-green"
+                    >
+                      <ArrowDownTrayIcon className="icon" />
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {facturasFiltradas.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="empty-message">
+                    No se encontraron facturas para ese proveedor.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </section>
       </div>
     </div>
   );
 };
 
 export default Invoices;
-
-

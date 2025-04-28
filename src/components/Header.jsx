@@ -1,11 +1,11 @@
-
 import React from 'react';
-import './Header.css';
 
-const Header = () => (
-  <header className="header">
-    <h1>Panel de Administración</h1>
-  </header>
-);
+const Header = () => {
+  return (
+    <header className="h-16 bg-white flex items-center justify-between px-6 border-b">
+      <div className="text-lg font-semibold text-gray-800">Bienvenido 👋</div>
+    </header>
+  );
+};
 
 export default Header;
